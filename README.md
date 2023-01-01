@@ -2,6 +2,9 @@
 
 > Generating CRUD features in PHP automatically and can be used on API projects to accept requests from a single POST endpoint. Please take a look at samples.php
 
+#### Installation:
+- By composer: `composer require iazaran/crudgeneratrix`
+
 #### Features:
 - **Get information about the tables and columns**
 The `information` method can generate information about the tables and columns. So frontend can see the columns and their types.
