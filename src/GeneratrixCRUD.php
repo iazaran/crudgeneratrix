@@ -65,9 +65,10 @@ class GeneratrixCRUD
      * Handle CREATE request
      *
      * @param array $table
+     * @param array $callback
      * @return bool|mysqli_result|string
      */
-    public static function create(array $table): mysqli_result|bool|string
+    public static function create(array $table, array $callback = []): mysqli_result|bool|string
     {
         $tableName = array_key_first($table);
         $sql = "INSERT INTO $tableName";
@@ -95,6 +96,10 @@ class GeneratrixCRUD
 
         $result = self::$generatrixDB->dbConnection->query($sql);
 
+        if (count($callback) == 2 && is_callable($callback)) {
+            $result = call_user_func_array($callback, (array)$result);
+        }
+
         return match (self::$responseType) {
             'JSON' => json_encode($result),
             default => $result,
@@ -108,9 +113,10 @@ class GeneratrixCRUD
      * @param array $table
      * @param array $relationships
      * @param string $relationshipDirection
+     * @param array $callback
      * @return array|false|string
      */
-    public static function read(int $id, array $table, array $relationships = [], string $relationshipDirection = 'LEFT'): bool|array|string
+    public static function read(int $id, array $table, array $relationships = [], string $relationshipDirection = 'LEFT', array $callback = []): bool|array|string
     {
         $tableName = array_key_first($table);
 
@@ -167,6 +173,10 @@ class GeneratrixCRUD
             }
         }
 
+        if (count($callback) == 2 && is_callable($callback)) {
+            $response = call_user_func_array($callback, $response);
+        }
+
         return match (self::$responseType) {
             'JSON' => json_encode($response),
             default => $response,
@@ -178,9 +188,10 @@ class GeneratrixCRUD
      *
      * @param int $id
      * @param array $table
+     * @param array $callback
      * @return bool|mysqli_result|string
      */
-    public static function update(int $id, array $table): mysqli_result|bool|string
+    public static function update(int $id, array $table, array $callback = []): mysqli_result|bool|string
     {
         $tableName = array_key_first($table);
         $sql = "UPDATE $tableName";
@@ -194,6 +205,10 @@ class GeneratrixCRUD
 
         $result = self::$generatrixDB->dbConnection->query($sql);
 
+        if (count($callback) == 2 && is_callable($callback)) {
+            $result = call_user_func_array($callback, (array)$result);
+        }
+
         return match (self::$responseType) {
             'JSON' => json_encode($result),
             default => $result,
@@ -205,13 +220,18 @@ class GeneratrixCRUD
      *
      * @param int $id
      * @param array $table
+     * @param array $callback
      * @return bool|mysqli_result|string
      */
-    public static function delete(int $id, array $table): mysqli_result|bool|string
+    public static function delete(int $id, array $table, array $callback = []): mysqli_result|bool|string
     {
         $sql = "DELETE FROM $table[0] WHERE id = $id";
 
         $result = self::$generatrixDB->dbConnection->query($sql);
+
+        if (count($callback) == 2 && is_callable($callback)) {
+            $result = call_user_func_array($callback, (array)$result);
+        }
 
         return match (self::$responseType) {
             'JSON' => json_encode($result),

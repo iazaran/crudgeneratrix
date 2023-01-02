@@ -18,21 +18,23 @@ This package doesn't serve API features, but you can set an endpoint to accept t
 - Now update samples.php and run `php samples.php`.
 - Some samples:
 ```php
-// Creating instances
+// Creating instances and specify the result type like JSON or RAW array of data
 $generatrixDB = new GeneratrixDB('locations', 'DBUser', 'DBPassword', 'localhost');
-$generatrixAPI = new GeneratrixCRUD($generatrixDB, 'JSON');
+$generatrixCRUD = new GeneratrixCRUD($generatrixDB, 'JSON');
 
 // Getting information about a table and some columns
-$generatrixAPI::information(['tt_countries' => ['countryCode', 'countryName']]);
+$generatrixCRUD::information(['tt_countries' => ['countryCode', 'countryName']]);
 // Reading a specific row from a table and related table(s) and columns based on different relationship directions
-$generatrixAPI::read(30, ['tt_cities' => ['cityName']], ['tt_hotels' => ['name']], 'LEFT');
-$generatrixAPI::read(30, ['tt_hotels' => ['name']], ['tt_cities' => ['cityName']], 'RIGHT');
+$generatrixCRUD::read(30, ['tt_cities' => ['cityName']], ['tt_hotels' => ['name']], 'LEFT');
+$generatrixCRUD::read(30, ['tt_hotels' => ['name']], ['tt_cities' => ['cityName']], 'RIGHT');
+// Using custom method as callback. You can see the sample of CustomMethods class in samples.php
+$generatrixCRUD::read(30, ['tt_cities' => ['cityName']], ['tt_hotels' => ['name']], 'LEFT', ['CustomMethods', 'groupByFirstColumn']);
 // Create multiple rows
-$generatrixAPI::create(['tt_countries' => ['countryCode' => ['US', 'GB'], 'countryName' => ['United State', 'Great Britain']]]);
+$generatrixCRUD::create(['tt_countries' => ['countryCode' => ['US', 'GB'], 'countryName' => ['United State', 'Great Britain']]]);
 // Update specific row
-$generatrixAPI::update(237, ['tt_countries' => ['countryCode' => 'ES', 'countryName' => 'Spain']]);
+$generatrixCRUD::update(237, ['tt_countries' => ['countryCode' => 'ES', 'countryName' => 'Spain']]);
 // Delete specific row
-$generatrixAPI::delete(237, ['tt_countries']);
+$generatrixCRUD::delete(237, ['tt_countries']);
 ```
 
 ------------
