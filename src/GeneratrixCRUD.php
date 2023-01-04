@@ -85,7 +85,7 @@ class GeneratrixCRUD
         for ($i = 0; $i < $rowCounter; $i++) {
             $sql .= " (";
             $columnValues = [];
-            foreach ($table[$tableName] as $key => $value) {
+            foreach ($table[$tableName] as $value) {
                 $columnValues[] = "'$value[$i]'";
             }
             $sql .= implode(', ', $columnValues) . ")";
@@ -246,10 +246,11 @@ class GeneratrixCRUD
      * @param array $table
      * @param array $relationships
      * @param string $relationshipDirection
+     * @param int $limit
      * @param array $callback
      * @return array|false|string
      */
-    public static function search(array $search, array $table, array $relationships = [], string $relationshipDirection = 'LEFT', array $callback = []): bool|array|string
+    public static function search(array $search, array $table, array $relationships = [], string $relationshipDirection = 'LEFT', int $limit = 1000, array $callback = []): bool|array|string
     {
         $tableName = array_key_first($table);
 
@@ -309,7 +310,7 @@ class GeneratrixCRUD
             }
             $searchesArray[] = '(' . implode(" $conditionsOperator ", $searchArray) . ')';
         }
-        $sql .= implode(' AND ', $searchesArray);
+        $sql .= implode(' AND ', $searchesArray) . " LIMIT $limit";
 
         $result = self::$generatrixDB->dbConnection->query($sql);
 
