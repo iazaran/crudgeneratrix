@@ -9,7 +9,7 @@
 - **Get information about the tables and columns**
 The `information` method can generate information about the tables and columns. So frontend can see the columns and their types.
 - **Generate simple CRUD automatically**
-The `create`, `read`, `update` and `delete` methods can accept the different parameters that determine the target table(s) and column(s) to apply CRUD. You can add your custom method to do more process on specific requests. (WIP: adding action to the existing method to handle specific requests and processes)
+The `create`, `read`, `update` and `delete` methods can accept the different parameters that determine the target table(s) and column(s) to apply CRUD. You can add your custom method to do more process on specific requests.
 - **Can be used by a single endpoint in API**
 This package doesn't serve API features, but you can set an endpoint to accept those parameters and do CRUD features like GraphQL.
 
@@ -35,6 +35,8 @@ $generatrixCRUD::create(['tt_countries' => ['countryCode' => ['US', 'GB'], 'coun
 $generatrixCRUD::update(237, ['tt_countries' => ['countryCode' => 'ES', 'countryName' => 'Spain']]);
 // Delete specific row
 $generatrixCRUD::delete(237, ['tt_countries']);
+// Search for multiple columns (AND, OR, XOR, ...) of target table (=, LIKE, NOT, ...) and list them ('AND' will be considered for joining conditions of conditions) You can add relationships like read method
+$generatrixCRUD::search(['OR' => ['=' => ['cityName' => 'dubai'], 'LIKE' => ['cityName' => 'old']]], ['tt_cities' => ['cityName']]);
 ```
 
 ------------

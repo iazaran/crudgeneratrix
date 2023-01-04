@@ -238,4 +238,95 @@ class GeneratrixCRUD
             default => $result,
         };
     }
+
+    /**
+     * Handle SEARCH request
+     *
+     * @param array $search
+     * @param array $table
+     * @param array $relationships
+     * @param string $relationshipDirection
+     * @param array $callback
+     * @return array|false|string
+     */
+    public static function search(array $search, array $table, array $relationships = [], string $relationshipDirection = 'LEFT', array $callback = []): bool|array|string
+    {
+        $tableName = array_key_first($table);
+
+        $columnNames = ["$tableName.*"];
+        if ($table[$tableName][0] != '*') {
+            $columnNames = [];
+            foreach ($table[$tableName] as $column) {
+                $columnNames[] = "$tableName.$column";
+            }
+        }
+
+        $columnNames = implode(', ', $columnNames);
+        $sql = "SELECT $columnNames";
+
+        $relatedSql = [];
+        if (count($relationships) > 0) {
+            foreach ($relationships as $key => $value) {
+                $relatedSql[$key] = " JOIN $key";
+
+                $columnNames = ["$key.*"];
+                if ($value[0] != '*') {
+                    $columnNames = [];
+                    foreach ($value as $column) {
+                        $columnNames[] = "$key.$column";
+                    }
+                }
+
+                $columnNames = implode(', ', $columnNames);
+            }
+
+            $sql .= ", $columnNames";
+        }
+
+        $sql .= " FROM $tableName";
+
+        if (count($relatedSql) > 0) {
+            foreach ($relatedSql as $key => $value) {
+                if ($relationshipDirection == 'LEFT') {
+                    $sql .= $value . " ON $tableName." . self::$generatrixDB->dbRelationships[$key]['REFERENCED_COLUMN_NAME'] . " = $key." . self::$generatrixDB->dbRelationships[$key]['COLUMN_NAME'];
+                } else {
+                    $sql .= $value . " ON $tableName." . self::$generatrixDB->dbRelationships[$tableName]['COLUMN_NAME'] . " = $key." . self::$generatrixDB->dbRelationships[$tableName]['REFERENCED_COLUMN_NAME'];
+                }
+            }
+        }
+
+        $sql .= ' WHERE ';
+        $searchesArray = [];
+        foreach ($search as $key => $value) {
+            $searchArray = [];
+            $conditionsOperator = $key;
+            foreach ($value as $k => $v) {
+                if ($k == 'LIKE') {
+                    $searchArray[] = "$tableName." . array_key_first($v) . " $k '%" . $v[array_key_first($v)] . "%'";
+                } else {
+                    $searchArray[] = "$tableName." . array_key_first($v) . " $k '" . $v[array_key_first($v)] . "'";
+                }
+            }
+            $searchesArray[] = '(' . implode(" $conditionsOperator ", $searchArray) . ')';
+        }
+        $sql .= implode(' AND ', $searchesArray);
+
+        $result = self::$generatrixDB->dbConnection->query($sql);
+
+        $response = [];
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $response[] = $row;
+            }
+        }
+
+        if (count($callback) == 2 && is_callable($callback)) {
+            $response = call_user_func_array($callback, $response);
+        }
+
+        return match (self::$responseType) {
+            'JSON' => json_encode($response),
+            default => $response,
+        };
+    }
 }
