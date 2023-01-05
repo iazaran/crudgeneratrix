@@ -246,11 +246,12 @@ class GeneratrixCRUD
      * @param array $table
      * @param array $relationships
      * @param string $relationshipDirection
+     * @param int $offset
      * @param int $limit
      * @param array $callback
      * @return array|false|string
      */
-    public static function search(array $search, array $table, array $relationships = [], string $relationshipDirection = 'LEFT', int $limit = 1000, array $callback = []): bool|array|string
+    public static function search(array $search, array $table, array $relationships = [], string $relationshipDirection = 'LEFT', int $offset = 0, int $limit = 1000, array $callback = []): bool|array|string
     {
         $tableName = array_key_first($table);
 
@@ -310,7 +311,7 @@ class GeneratrixCRUD
             }
             $searchesArray[] = '(' . implode(" $conditionsOperator ", $searchArray) . ')';
         }
-        $sql .= implode(' AND ', $searchesArray) . " LIMIT $limit";
+        $sql .= implode(' AND ', $searchesArray) . " LIMIT $offset, $limit";
 
         $result = self::$generatrixDB->dbConnection->query($sql);
 
