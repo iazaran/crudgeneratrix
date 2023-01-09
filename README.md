@@ -13,7 +13,7 @@ The `create`, `read`, `update` and `delete` methods can accept the different par
 - **Customizable search**
 The `search` method can be used for listing records based on some conditions. Conditions can be customize and join each others by different type of conditional operators. Relationships can be used like `read` method. Limitation and offset can be applied to limit records count and start index, that will be useful for pagination too.
 - **Can be used by a single endpoint in API**
-This package doesn't serve API features, but you can set an endpoint to accept those parameters and do CRUD features like GraphQL. (WIP: the single method to accept all parameters will be added.)
+This package doesn't serve API features, but you can set an endpoint to accept those parameters and do CRUD features like GraphQL. There is a method `api` that accepts all parameters and will implement any type of features of this package.
 
 #### Run Web App:
 - There is a sample in here. You can create a DB and some tables and records. Make sure you set foreign keys too.
@@ -39,6 +39,8 @@ $generatrixCRUD::update(237, ['tt_countries' => ['countryCode' => 'ES', 'country
 $generatrixCRUD::delete(237, ['tt_countries']);
 // Search for multiple columns (AND, OR, XOR, ...) of target table (=, LIKE, NOT, ...) and list them ('AND' will be considered for joining conditions of conditions) You can add relationships like read method
 $generatrixCRUD::search(['OR' => ['=' => ['cityName' => 'dubai'], 'LIKE' => ['cityName' => 'old']]], ['tt_cities' => ['cityName']], [], '', 10, 5);
+// To use as a single method for all type of features. You can use any method name in here as `type`
+$generatrixCRUD::api('search', array $table, int $id = null, array $relationships = [], string $relationshipDirection = 'LEFT', array $search = null, int $offset = 0, int $limit = 1000, array $callback = []);
 ```
 
 ------------

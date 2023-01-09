@@ -52,6 +52,9 @@ try {
 
     // Search for multiple columns (AND, OR, XOR, ...) of target table (=, LIKE, NOT, ...) and list them ('AND' will be considered for joining conditions of conditions) You can add relationships like read method
     var_dump($generatrixCRUD::search(['OR' => ['=' => ['cityName' => 'dubai'], 'LIKE' => ['cityName' => 'old']]], ['tt_cities' => ['cityName']], [], '', 10, 5));
+
+    // To use as a single method for all type of features. You can use any method name in here as `type`
+    var_dump($generatrixCRUD::api('search', ['tt_cities' => ['cityName']], null, [], '', ['OR' => ['=' => ['cityName' => 'dubai'], 'LIKE' => ['cityName' => 'old']]], 10, 5, []));
 } catch (Exception $e) {
     var_dump($e->getMessage());
 }
