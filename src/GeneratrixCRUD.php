@@ -331,4 +331,30 @@ class GeneratrixCRUD
             default => $response,
         };
     }
+
+    /**
+     * To use as a single method for all type of features
+     *
+     * @param string $type
+     * @param array $table
+     * @param int|null $id
+     * @param array $relationships
+     * @param string $relationshipDirection
+     * @param array $search
+     * @param int $offset
+     * @param int $limit
+     * @param array $callback
+     * @return array|bool|mysqli_result|string
+     */
+    public static function api(string $type, array $table, int $id = null, array $relationships = [], string $relationshipDirection = 'LEFT', array $search = [], int $offset = 0, int $limit = 1000, array $callback = []): mysqli_result|bool|array|string
+    {
+        return match ($type) {
+            'information' => self::information($table),
+            'create' => self::create($table, $callback),
+            'read' => self::read($id, $table, $relationships, $relationshipDirection, $callback),
+            'update' => self::update($id, $table, $callback),
+            'delete' => self::delete($id, $table, $callback),
+            'search' => self::search($search, $table, $relationships, $relationshipDirection, $offset, $limit, $callback),
+        };
+    }
 }
