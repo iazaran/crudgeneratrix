@@ -109,14 +109,14 @@ class GeneratrixCRUD
     /**
      * Handle READ request
      *
-     * @param int $id
      * @param array $table
+     * @param int $id
      * @param array $relationships
      * @param string $relationshipDirection
      * @param array $callback
      * @return array|false|string
      */
-    public static function read(int $id, array $table, array $relationships = [], string $relationshipDirection = 'LEFT', array $callback = []): bool|array|string
+    public static function read(array $table, int $id, array $relationships = [], string $relationshipDirection = 'LEFT', array $callback = []): bool|array|string
     {
         $tableName = array_key_first($table);
 
@@ -186,12 +186,12 @@ class GeneratrixCRUD
     /**
      * Handle UPDATE request
      *
-     * @param int $id
      * @param array $table
+     * @param int $id
      * @param array $callback
      * @return bool|mysqli_result|string
      */
-    public static function update(int $id, array $table, array $callback = []): mysqli_result|bool|string
+    public static function update(array $table, int $id, array $callback = []): mysqli_result|bool|string
     {
         $tableName = array_key_first($table);
         $sql = "UPDATE $tableName";
@@ -218,12 +218,12 @@ class GeneratrixCRUD
     /**
      * Handle DELETE request
      *
-     * @param int $id
      * @param array $table
+     * @param int $id
      * @param array $callback
      * @return bool|mysqli_result|string
      */
-    public static function delete(int $id, array $table, array $callback = []): mysqli_result|bool|string
+    public static function delete(array $table, int $id, array $callback = []): mysqli_result|bool|string
     {
         $sql = "DELETE FROM $table[0] WHERE id = $id";
 
