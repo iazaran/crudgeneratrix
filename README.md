@@ -1,6 +1,6 @@
 ### PHP CRUD Generatrix
 
-> Generating CRUD features in PHP automatically and can be used on API projects to accept requests from a single POST endpoint. Please take a look at samples.php
+> Generating CRUD features in PHP and can be used on API projects to accept requests from a single POST endpoint. Please take a look at samples.php
 
 #### Installation:
 - By composer: `composer require iazaran/crudgeneratrix`
@@ -20,27 +20,87 @@ This package doesn't serve API features, but you can set an endpoint to accept t
 - Now update samples.php and run `php samples.php`.
 - Some samples:
 ```php
-// Creating instances and specify the result type like JSON or RAW array of data
-$generatrixDB = new GeneratrixDB('locations', 'DBUser', 'DBPassword', 'localhost');
-$generatrixCRUD = new GeneratrixCRUD($generatrixDB, 'JSON');
-
 // Getting information about a table and some columns
-$generatrixCRUD::information(['tt_countries' => ['countryCode', 'countryName']]);
+$generatrixCRUD::information(
+    ['countries' => ['countryCode', 'countryName']]
+);
+
 // Reading a specific row from a table and related table(s) and columns based on different relationship directions
-$generatrixCRUD::read(30, ['tt_cities' => ['cityName']], ['tt_hotels' => ['name']], 'LEFT');
-$generatrixCRUD::read(30, ['tt_hotels' => ['name']], ['tt_cities' => ['cityName']], 'RIGHT');
-// Using custom method as callback. You can see the sample of CustomMethods class in samples.php
-$generatrixCRUD::read(30, ['tt_cities' => ['cityName']], ['tt_hotels' => ['name']], 'LEFT', ['CustomMethods', 'groupByFirstColumn']);
+$generatrixCRUD::read(
+    ['cities' => ['cityName']],
+    30,
+    ['hotels' => ['name']],
+    'LEFT'
+);
+$generatrixCRUD::read(
+    ['hotels' => ['name']],
+    30,
+    ['cities' => ['cityName']],
+    'RIGHT'
+);
+
+// Using custom method as callback
+// Without callback like: [{"cityName":"Al Ain","name":"Radisson Blu Hotel & Resort, Al Ain"},{"cityName":"Al Ain","name":"Danat Al Ain Resort"},{"cityName":"Al Ain","name":"Mercure Grand Jebel Hafeet Al Ain Hotel"}]
+// With callback like: {"cityName":[{"name":"Radisson Blu Hotel & Resort, Al Ain"},{"name":"Danat Al Ain Resort"},{"name":"Mercure Grand Jebel Hafeet Al Ain Hotel"}]}
+$generatrixCRUD::read(
+    ['cities' => ['cityName']],
+    30,
+    ['hotels' => ['name']],
+    'LEFT',
+    ['CustomMethods', 'groupByFirstColumn']
+);
+
 // Create multiple rows
-$generatrixCRUD::create(['tt_countries' => ['countryCode' => ['US', 'GB'], 'countryName' => ['United State', 'Great Britain']]]);
+$generatrixCRUD::create(
+    ['countries' => [
+        'countryCode' => ['US', 'GB'],
+        'countryName' => ['United State', 'Great Britain'],
+    ]]
+);
+
 // Update specific row
-$generatrixCRUD::update(237, ['tt_countries' => ['countryCode' => 'ES', 'countryName' => 'Spain']]);
+$generatrixCRUD::update(
+    ['countries' => [
+        'countryCode' => 'ES',
+        'countryName' => 'Spain',
+    ]],
+    237
+);
+
 // Delete specific row
-$generatrixCRUD::delete(237, ['tt_countries']);
+$generatrixCRUD::delete(
+    ['countries'],
+    237
+);
+
 // Search for multiple columns (AND, OR, XOR, ...) of target table (=, LIKE, NOT, ...) and list them ('AND' will be considered for joining conditions of conditions) You can add relationships like read method
-$generatrixCRUD::search(['OR' => ['=' => ['cityName' => 'dubai'], 'LIKE' => ['cityName' => 'old']]], ['tt_cities' => ['cityName']], [], '', 10, 5);
+$generatrixCRUD::search(
+    ['OR' => [
+        '=' => ['cityName' => 'dubai'],
+        'LIKE' => ['cityName' => 'old'],
+    ]],
+    ['cities' => ['cityName']],
+    [],
+    '',
+    10,
+    5
+);
+
 // To use as a single method for all type of features. You can use any method name in here as `type`
-$generatrixCRUD::api('search', array $table, int $id = null, array $relationships = [], string $relationshipDirection = 'LEFT', array $search = null, int $offset = 0, int $limit = 1000, array $callback = []);
+$generatrixCRUD::api(
+    'search',
+    ['cities' => ['cityName']],
+    null,
+    [],
+    '',
+    ['OR' => [
+        '=' => ['cityName' => 'dubai'],
+        'LIKE' => ['cityName' => 'old'],
+    ]],
+    10,
+    5,
+    []
+);
 ```
 
 ------------
