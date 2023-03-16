@@ -351,9 +351,9 @@ class GeneratrixCRUD
         return match ($type) {
             'information' => self::information($table),
             'create' => self::create($table, $callback),
-            'read' => self::read($id, $table, $relationships, $relationshipDirection, $callback),
-            'update' => self::update($id, $table, $callback),
-            'delete' => self::delete($id, $table, $callback),
+            'read' => self::read($table, $id, $relationships, $relationshipDirection, $callback),
+            'update' => self::update($table, $id, $callback),
+            'delete' => self::delete($table, $id, $callback),
             'search' => self::search($search, $table, $relationships, $relationshipDirection, $offset, $limit, $callback),
         };
     }
